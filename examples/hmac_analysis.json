@@ -1,0 +1,78 @@
+{
+  "file_path": "data/raw/hmac.c",
+  "functions": [
+    {
+      "name": "Curl_HMAC_init",
+      "start_line": 45,
+      "end_line": 99,
+      "embedding_summary": "Initializes an HMAC context by allocating memory, processing the key according to HMAC specifications, and setting up two hash contexts with inner and outer padding.",
+      "predicted_labels": {
+        "high_level_purpose": "Initializes an HMAC context by allocating memory, processing the key according to HMAC specifications, and setting up two hash contexts with inner and outer padding.",
+        "control_flow_elements": [
+          "if",
+          "for",
+          "goto",
+          "return"
+        ],
+        "side_effects": [
+          "memory"
+        ],
+        "complexity": "medium",
+        "error_handling": "returns_code"
+      }
+    },
+    {
+      "name": "Curl_HMAC_update",
+      "start_line": 101,
+      "end_line": 108,
+      "embedding_summary": "Updates an HMAC context by feeding data to the first hash calculation.",
+      "predicted_labels": {
+        "high_level_purpose": "Updates an HMAC context by feeding data to the first hash calculation.",
+        "control_flow_elements": [
+          "return"
+        ],
+        "side_effects": [
+          "none"
+        ],
+        "complexity": "low",
+        "error_handling": "none"
+      }
+    },
+    {
+      "name": "Curl_HMAC_final",
+      "start_line": 110,
+      "end_line": 125,
+      "embedding_summary": "Finalizes an HMAC computation by performing the final hash operations and cleaning up the context structure.",
+      "predicted_labels": {
+        "high_level_purpose": "Finalizes an HMAC computation by performing the final hash operations and cleaning up the context structure.",
+        "control_flow_elements": [
+          "if",
+          "return"
+        ],
+        "side_effects": [
+          "none"
+        ],
+        "complexity": "low",
+        "error_handling": "returns_code"
+      }
+    },
+    {
+      "name": "Curl_hmacit",
+      "start_line": 144,
+      "end_line": 162,
+      "embedding_summary": "Computes an HMAC (Hash-based Message Authentication Code) using the provided key and data, storing the result in the output buffer.",
+      "predicted_labels": {
+        "high_level_purpose": "Computes an HMAC (Hash-based Message Authentication Code) using the provided key and data, storing the result in the output buffer.",
+        "control_flow_elements": [
+          "if",
+          "return"
+        ],
+        "side_effects": [
+          "none"
+        ],
+        "complexity": "low",
+        "error_handling": "returns_code"
+      }
+    }
+  ]
+}

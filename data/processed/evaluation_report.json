@@ -1,0 +1,918 @@
+{
+  "dataset_stats": {
+    "total_functions": 780,
+    "embedding_dimension": 2560,
+    "side_effect_distribution": {
+      "global_state": 294,
+      "memory": 281,
+      "none": 110,
+      "hardware": 315,
+      "assertions": 1,
+      "network": 9,
+      "io": 105
+    }
+  },
+  "classification_metrics": {
+    "test_f1_macro": 0.6258085839676751,
+    "test_accuracy": 0.5470085470085471,
+    "classes": [
+      "assertions",
+      "global_state",
+      "hardware",
+      "io",
+      "memory",
+      "network",
+      "none"
+    ],
+    "classification_report": {
+      "assertions": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "global_state": {
+        "precision": 0.7425742574257426,
+        "recall": 0.7425742574257426,
+        "f1-score": 0.7425742574257426,
+        "support": 101.0
+      },
+      "hardware": {
+        "precision": 0.8936170212765957,
+        "recall": 0.9882352941176471,
+        "f1-score": 0.9385474860335196,
+        "support": 85.0
+      },
+      "io": {
+        "precision": 0.5526315789473685,
+        "recall": 0.7241379310344828,
+        "f1-score": 0.6268656716417911,
+        "support": 29.0
+      },
+      "memory": {
+        "precision": 0.7631578947368421,
+        "recall": 0.8055555555555556,
+        "f1-score": 0.7837837837837838,
+        "support": 72.0
+      },
+      "network": {
+        "precision": 1.0,
+        "recall": 0.25,
+        "f1-score": 0.4,
+        "support": 4.0
+      },
+      "none": {
+        "precision": 0.9696969696969697,
+        "recall": 0.8205128205128205,
+        "f1-score": 0.8888888888888888,
+        "support": 39.0
+      },
+      "micro avg": {
+        "precision": 0.7900874635568513,
+        "recall": 0.8212121212121212,
+        "f1-score": 0.8053491827637445,
+        "support": 330.0
+      },
+      "macro avg": {
+        "precision": 0.7030968174405027,
+        "recall": 0.6187165512351783,
+        "f1-score": 0.6258085839676751,
+        "support": 330.0
+      },
+      "weighted avg": {
+        "precision": 0.799240341930966,
+        "recall": 0.8212121212121212,
+        "f1-score": 0.8050143633016975,
+        "support": 330.0
+      },
+      "samples avg": {
+        "precision": 0.7663817663817662,
+        "recall": 0.8254985754985755,
+        "f1-score": 0.7748473748473748,
+        "support": 330.0
+      }
+    }
+  },
+  "similarity_metrics": {
+    "num_queries": 10,
+    "k": 5,
+    "average_side_effect_overlap": 0.6466666666666667,
+    "detailed_results": [
+      {
+        "query_function": "sch311x_sio_inb",
+        "retrieved": [
+          {
+            "retrieved_function": "sch311x_sio_outb",
+            "similarity_score": 0.9566947817802429,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          },
+          {
+            "retrieved_function": "sch311x_sio_exit",
+            "similarity_score": 0.9294707775115967,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          },
+          {
+            "retrieved_function": "sch311x_sio_enter",
+            "similarity_score": 0.9119819402694702,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "io"
+            ]
+          },
+          {
+            "retrieved_function": "sch311x_detect",
+            "similarity_score": 0.9046283960342407,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "io"
+            ]
+          },
+          {
+            "retrieved_function": "sch_io_rd8",
+            "similarity_score": 0.8749160766601562,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.8
+      },
+      {
+        "query_function": "dictExpand",
+        "retrieved": [
+          {
+            "retrieved_function": "dictTryExpand",
+            "similarity_score": 0.9441518187522888,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "_dictExpandIfNeeded",
+            "similarity_score": 0.9377967119216919,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "_dictExpand",
+            "similarity_score": 0.9376777410507202,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "dictTypeResizeAllowed",
+            "similarity_score": 0.9218177795410156,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "none"
+            ]
+          },
+          {
+            "retrieved_function": "_dictShrinkIfNeeded",
+            "similarity_score": 0.900118350982666,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.6
+      },
+      {
+        "query_function": "sdscatsds",
+        "retrieved": [
+          {
+            "retrieved_function": "sdscat",
+            "similarity_score": 0.9757673740386963,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "sdscpy",
+            "similarity_score": 0.9529457092285156,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "sdsdup",
+            "similarity_score": 0.931262731552124,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "sdscatlen",
+            "similarity_score": 0.9285092949867249,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "sdscpylen",
+            "similarity_score": 0.9153434038162231,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "memory"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 1.0
+      },
+      {
+        "query_function": "luaEngineCreate",
+        "retrieved": [
+          {
+            "retrieved_function": "luaEngineInitEngine",
+            "similarity_score": 0.9545365571975708,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "global_state",
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "luaEngineCall",
+            "similarity_score": 0.9182085990905762,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "luaEngineLoadHook",
+            "similarity_score": 0.9105876684188843,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "luaRegisterFunction",
+            "similarity_score": 0.9047868251800537,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "global_state",
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "luaEngineFreeCtx",
+            "similarity_score": 0.8761507272720337,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "global_state",
+              "memory"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.8
+      },
+      {
+        "query_function": "Curl_HMAC_update",
+        "retrieved": [
+          {
+            "retrieved_function": "Curl_hmacit",
+            "similarity_score": 0.9353145956993103,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "Curl_HMAC_final",
+            "similarity_score": 0.9156627655029297,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "Curl_HMAC_init",
+            "similarity_score": 0.8955485820770264,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "MD4_Update",
+            "similarity_score": 0.8709437847137451,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "Curl_md4it",
+            "similarity_score": 0.8610102534294128,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "none"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.2
+      },
+      {
+        "query_function": "connUnixSetReadHandler",
+        "retrieved": [
+          {
+            "retrieved_function": "connUnixSetWriteHandler",
+            "similarity_score": 0.9211589097976685,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "connUnixAccept",
+            "similarity_score": 0.9053604602813721,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "network"
+            ]
+          },
+          {
+            "retrieved_function": "connUnixRead",
+            "similarity_score": 0.8875589966773987,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "io"
+            ]
+          },
+          {
+            "retrieved_function": "connUnixRebindEventLoop",
+            "similarity_score": 0.8737195134162903,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "connUnixClose",
+            "similarity_score": 0.8708475828170776,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "io"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.4
+      },
+      {
+        "query_function": "sa1100_gpio_type",
+        "retrieved": [
+          {
+            "retrieved_function": "gnr_gpio_irq_set_type",
+            "similarity_score": 0.9390202164649963,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware",
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "uniphier_gpio_irq_set_type",
+            "similarity_score": 0.9370303153991699,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "hardware",
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          },
+          {
+            "retrieved_function": "mlxbf2_gpio_irq_set_type",
+            "similarity_score": 0.936944842338562,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware",
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "sa1100_gpio_mask",
+            "similarity_score": 0.9157416820526123,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware",
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "sa1100_gpio_unmask",
+            "similarity_score": 0.9131860733032227,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware",
+              "global_state"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.9
+      },
+      {
+        "query_function": "Curl_timestrcmp",
+        "retrieved": [
+          {
+            "retrieved_function": "Curl_safecmp",
+            "similarity_score": 0.8847689032554626,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "none"
+            ],
+            "retrieved_effects": [
+              "none"
+            ]
+          },
+          {
+            "retrieved_function": "crc64Test",
+            "similarity_score": 0.7703869938850403,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "none"
+            ],
+            "retrieved_effects": [
+              "io",
+              "global_state",
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "compareCallback",
+            "similarity_score": 0.7655367255210876,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "none"
+            ],
+            "retrieved_effects": [
+              "none"
+            ]
+          },
+          {
+            "retrieved_function": "get_proc_stat_ll",
+            "similarity_score": 0.7649601697921753,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "none"
+            ],
+            "retrieved_effects": [
+              "io"
+            ]
+          },
+          {
+            "retrieved_function": "sdsTest",
+            "similarity_score": 0.7643749117851257,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "none"
+            ],
+            "retrieved_effects": [
+              "io",
+              "memory"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.4
+      },
+      {
+        "query_function": "devm_i8255_regmap_register",
+        "retrieved": [
+          {
+            "retrieved_function": "fxl6408_probe",
+            "similarity_score": 0.9148134589195251,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "i8255_reg_mask_xlate",
+            "similarity_score": 0.9122066497802734,
+            "side_effect_overlap": 0.0,
+            "query_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "none"
+            ]
+          },
+          {
+            "retrieved_function": "i8255_ppi_init",
+            "similarity_score": 0.8890268206596375,
+            "side_effect_overlap": 0.3333333333333333,
+            "query_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          },
+          {
+            "retrieved_function": "sch311x_gpio_probe",
+            "similarity_score": 0.8861434459686279,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "io",
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "mlxbf2_gpio_probe",
+            "similarity_score": 0.8815662860870361,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state",
+              "memory"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.5666666666666667
+      },
+      {
+        "query_function": "qcom_wdt_start",
+        "retrieved": [
+          {
+            "retrieved_function": "qcom_wdt_restart",
+            "similarity_score": 0.9590953588485718,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "memory"
+            ]
+          },
+          {
+            "retrieved_function": "qcom_wdt_stop",
+            "similarity_score": 0.9396250247955322,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          },
+          {
+            "retrieved_function": "aspeed_wdt_set_timeout",
+            "similarity_score": 0.9307892322540283,
+            "side_effect_overlap": 0.5,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware",
+              "global_state"
+            ]
+          },
+          {
+            "retrieved_function": "qcom_wdt_is_running",
+            "similarity_score": 0.9302055239677429,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          },
+          {
+            "retrieved_function": "qcom_wdt_ping",
+            "similarity_score": 0.9243375062942505,
+            "side_effect_overlap": 1.0,
+            "query_effects": [
+              "hardware"
+            ],
+            "retrieved_effects": [
+              "hardware"
+            ]
+          }
+        ],
+        "avg_side_effect_overlap": 0.8
+      }
+    ]
+  },
+  "clustering_metrics": {
+    "n_clusters": 4,
+    "silhouette_score": 0.1023043543100357,
+    "average_label_purity": 0.34864068881129257,
+    "cluster_sizes": {
+      "0": 128,
+      "1": 132,
+      "2": 274,
+      "3": 246
+    },
+    "cluster_side_effects": {
+      "0": {
+        "none": 36,
+        "memory": 66,
+        "global_state": 53,
+        "assertions": 1,
+        "io": 4
+      },
+      "1": {
+        "hardware": 106,
+        "global_state": 56,
+        "none": 15,
+        "io": 12,
+        "memory": 18
+      },
+      "2": {
+        "global_state": 85,
+        "memory": 150,
+        "none": 47,
+        "hardware": 9,
+        "network": 9,
+        "io": 38
+      },
+      "3": {
+        "global_state": 100,
+        "io": 51,
+        "hardware": 200,
+        "memory": 47,
+        "none": 12
+      }
+    }
+  },
+  "failure_analysis": {
+    "classification_failures": [
+      {
+        "function_name": "zlibc_free",
+        "file_path": "data/raw/zmalloc.c",
+        "true_side_effects": [
+          "memory"
+        ],
+        "predicted_side_effects": [
+          "none",
+          "memory"
+        ],
+        "code_length": 45
+      },
+      {
+        "function_name": "sdsempty",
+        "file_path": "data/raw/sds.c",
+        "true_side_effects": [
+          "memory"
+        ],
+        "predicted_side_effects": [
+          "none"
+        ],
+        "code_length": 50
+      },
+      {
+        "function_name": "MD4_Init",
+        "file_path": "data/raw/md4.c",
+        "true_side_effects": [
+          "global_state"
+        ],
+        "predicted_side_effects": [
+          "none"
+        ],
+        "code_length": 64
+      },
+      {
+        "function_name": "MD4_Init",
+        "file_path": "data/raw/md4.c",
+        "true_side_effects": [
+          "global_state"
+        ],
+        "predicted_side_effects": [
+          "none"
+        ],
+        "code_length": 66
+      },
+      {
+        "function_name": "freeCallback",
+        "file_path": "data/raw/dict.c",
+        "true_side_effects": [
+          "memory"
+        ],
+        "predicted_side_effects": [
+          "none"
+        ],
+        "code_length": 73
+      }
+    ],
+    "similarity_failures": [
+      {
+        "query_function": "Curl_raw_toupper",
+        "similar_function": "Curl_strntoupper",
+        "similarity_score": 0.808466911315918,
+        "query_effects": [
+          "global_state"
+        ],
+        "similar_effects": [
+          "memory"
+        ],
+        "reason": "High embedding similarity but different side effects"
+      },
+      {
+        "query_function": "Curl_raw_tolower",
+        "similar_function": "Curl_strntolower",
+        "similarity_score": 0.8011059165000916,
+        "query_effects": [
+          "global_state"
+        ],
+        "similar_effects": [
+          "memory"
+        ],
+        "reason": "High embedding similarity but different side effects"
+      },
+      {
+        "query_function": "Curl_strntoupper",
+        "similar_function": "Curl_raw_toupper",
+        "similarity_score": 0.808466911315918,
+        "query_effects": [
+          "memory"
+        ],
+        "similar_effects": [
+          "global_state"
+        ],
+        "reason": "High embedding similarity but different side effects"
+      },
+      {
+        "query_function": "Curl_strntolower",
+        "similar_function": "Curl_raw_tolower",
+        "similarity_score": 0.8011059165000916,
+        "query_effects": [
+          "memory"
+        ],
+        "similar_effects": [
+          "global_state"
+        ],
+        "reason": "High embedding similarity but different side effects"
+      },
+      {
+        "query_function": "dictStoredKey2Key",
+        "similar_function": "dictSetKey",
+        "similarity_score": 0.9017457962036133,
+        "query_effects": [
+          "none"
+        ],
+        "similar_effects": [
+          "memory"
+        ],
+        "reason": "High embedding similarity but different side effects"
+      }
+    ],
+    "analysis": "Found 5 classification failures and 5 similarity failures.\n\nClassification Failure Analysis:\n- Average code length of failing functions: 60 characters\n- Common pattern: Short utility functions (getters/setters) often misclassified\n- Reason: These functions have similar syntactic structure regardless of purpose\n\nSimilarity Search Failure Analysis:\n- Functions with high embedding similarity can have different semantic behaviors\n- Reason: Embeddings capture syntactic patterns more than runtime behavior\n- Example: A function that reads config vs writes config may look similar in code\n\nRecommended Improvements:\n1. Incorporate AST features (control flow depth, statement types) for better discrimination\n2. Use larger embedding models trained specifically on C code\n3. Add data augmentation for underrepresented side effect categories"
+  }
+}
