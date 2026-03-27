@@ -1154,34 +1154,42 @@ class FunctionEmbeddingPipeline:
         from sklearn.preprocessing import LabelEncoder
         from sklearn.model_selection import GridSearchCV
 
-        X = self.embeddings_matrix
-        original_dim = X.shape[1]
+        X_embed = self.embeddings_matrix
+        original_dim = X_embed.shape[1]
 
-        # Apply PCA dimensionality reduction if requested
+        # Split indices FIRST to prevent data leakage in PCA/scaling
+        n_samples = X_embed.shape[0]
+        indices = np.arange(n_samples)
+        train_idx, test_idx = train_test_split(
+            indices, test_size=test_size, random_state=random_state
+        )
+
+        # Apply PCA dimensionality reduction (fit on train only)
         if embed_dim is not None and embed_dim < original_dim:
             print(f"  Reducing embeddings from {original_dim} to {embed_dim} dimensions using PCA...")
             self.pca = PCA(n_components=embed_dim, random_state=random_state)
-            X = self.pca.fit_transform(X)
+            X_train = self.pca.fit_transform(X_embed[train_idx])
+            X_test = self.pca.transform(X_embed[test_idx])
             variance_retained = sum(self.pca.explained_variance_ratio_) * 100
             print(f"  Variance retained: {variance_retained:.1f}%")
         else:
             self.pca = None
+            X_train = X_embed[train_idx].copy()
+            X_test = X_embed[test_idx].copy()
 
-        # Apply hybrid features if requested (regex-based)
+        # Apply hybrid features (fit scaler on train only)
         self.use_hybrid_features = use_hybrid_features
         if use_hybrid_features:
             if self.code_features_matrix is None:
                 raise ValueError("Code features not extracted. Re-run embed_labeled_functions.")
-
-            # Scale code features
             self.feature_scaler = StandardScaler()
-            code_features_scaled = self.feature_scaler.fit_transform(self.code_features_matrix)
+            cf_train = self.feature_scaler.fit_transform(self.code_features_matrix[train_idx])
+            cf_test = self.feature_scaler.transform(self.code_features_matrix[test_idx])
+            X_train = np.hstack([X_train, cf_train])
+            X_test = np.hstack([X_test, cf_test])
+            print(f"  Hybrid features: {X_train.shape[1]} dims (+{self.code_features_matrix.shape[1]} regex features)")
 
-            # Concatenate embeddings with code features
-            X = np.hstack([X, code_features_scaled])
-            print(f"  Hybrid features: {X.shape[1]} dims (+{self.code_features_matrix.shape[1]} regex features)")
-
-        # Apply AST features if requested (tree-sitter based)
+        # Apply AST features (fit scaler on train only)
         self.use_ast_features = use_ast_features
         if use_ast_features:
             if self.ast_features_matrix is None:
@@ -1190,23 +1198,22 @@ class FunctionEmbeddingPipeline:
                 else:
                     print("  Warning: tree-sitter not available, skipping AST features")
             else:
-                # Scale AST features
                 self.ast_feature_scaler = StandardScaler()
-                ast_features_scaled = self.ast_feature_scaler.fit_transform(self.ast_features_matrix)
+                ast_train = self.ast_feature_scaler.fit_transform(self.ast_features_matrix[train_idx])
+                ast_test = self.ast_feature_scaler.transform(self.ast_features_matrix[test_idx])
+                X_train = np.hstack([X_train, ast_train])
+                X_test = np.hstack([X_test, ast_test])
+                print(f"  AST features: {X_train.shape[1]} dims (+{self.ast_features_matrix.shape[1]} AST features)")
 
-                # Concatenate with existing features
-                X = np.hstack([X, ast_features_scaled])
-                print(f"  AST features: {X.shape[1]} dims (+{self.ast_features_matrix.shape[1]} AST features)")
-
-        # Apply purpose embeddings if requested
+        # Apply purpose embeddings (no scaling needed)
         self.use_purpose_embeddings = use_purpose_embeddings
         if use_purpose_embeddings:
             if self.purpose_embeddings_matrix is None:
                 print("  Warning: No purpose embeddings available, skipping")
             else:
-                # Concatenate purpose embeddings (already in same scale as code embeddings)
-                X = np.hstack([X, self.purpose_embeddings_matrix])
-                print(f"  Purpose embeddings: {X.shape[1]} dims (+{self.purpose_embeddings_matrix.shape[1]} purpose dims)")
+                X_train = np.hstack([X_train, self.purpose_embeddings_matrix[train_idx]])
+                X_test = np.hstack([X_test, self.purpose_embeddings_matrix[test_idx]])
+                print(f"  Purpose embeddings: {X_train.shape[1]} dims (+{self.purpose_embeddings_matrix.shape[1]} purpose dims)")
 
         # Store threshold tuning flag
         self.use_threshold_tuning = use_threshold_tuning
@@ -1369,14 +1376,26 @@ class FunctionEmbeddingPipeline:
         side_effects_list = [ef.labels.get("side_effects", ["none"]) for ef in self.embedded_functions]
         self.side_effects_mlb = MultiLabelBinarizer()
         Y_se = self.side_effects_mlb.fit_transform(side_effects_list)
+        Y_se_train = Y_se[train_idx]
+        Y_se_test = Y_se[test_idx]
 
-        X_train, X_test, Y_se_train, Y_se_test = train_test_split(
-            X, Y_se, test_size=test_size, random_state=random_state
-        )
         metrics["train_size"] = len(X_train)
         metrics["test_size"] = len(X_test)
         metrics["use_binary_classifiers"] = use_binary_classifiers
         metrics["use_smote"] = use_smote
+
+        # For threshold tuning, hold out a validation set from training data
+        if use_threshold_tuning:
+            _fit_idx, _val_idx = train_test_split(
+                np.arange(len(X_train)), test_size=0.2, random_state=random_state
+            )
+            X_train_fit = X_train[_fit_idx]
+            X_val = X_train[_val_idx]
+            Y_se_train_fit = Y_se_train[_fit_idx]
+            Y_se_val = Y_se_train[_val_idx]
+        else:
+            X_train_fit = X_train
+            Y_se_train_fit = Y_se_train
 
         if use_binary_classifiers:
             # Train separate binary classifier for each side effect
@@ -1387,16 +1406,16 @@ class FunctionEmbeddingPipeline:
             Y_se_pred = np.zeros_like(Y_se_test)
 
             for i, class_name in enumerate(self.side_effects_mlb.classes_):
-                y_train_binary = Y_se_train[:, i]
+                y_fit_binary = Y_se_train_fit[:, i]
                 y_test_binary = Y_se_test[:, i]
 
-                # Check if class has enough samples
-                pos_count = y_train_binary.sum()
+                # Check if class has enough samples in fitting data
+                pos_count = y_fit_binary.sum()
                 if pos_count < 2:
                     print(f"    Skipping '{class_name}' (only {pos_count} positive samples)")
                     continue
 
-                X_train_resampled, y_train_resampled = X_train, y_train_binary
+                X_fit_resampled, y_fit_resampled = X_train_fit, y_fit_binary
 
                 # Apply SMOTE for binary classification
                 if use_smote and IMBLEARN_AVAILABLE and pos_count >= 2:
@@ -1405,27 +1424,28 @@ class FunctionEmbeddingPipeline:
                         k = min(5, pos_count - 1)
                         if k >= 1:
                             smote = SMOTE(random_state=random_state, k_neighbors=k)
-                            X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train_binary)
-                            print(f"    '{class_name}': SMOTE {len(y_train_binary)} -> {len(y_train_resampled)} samples")
+                            X_fit_resampled, y_fit_resampled = smote.fit_resample(X_train_fit, y_fit_binary)
+                            print(f"    '{class_name}': SMOTE {len(y_fit_binary)} -> {len(y_fit_resampled)} samples")
                     except Exception as e:
                         print(f"    '{class_name}': SMOTE failed ({e}), using original data")
 
                 # Train binary classifier
-                clf = get_tuned_classifier(side_effects_clf, X_train_resampled, y_train_resampled,
+                clf = get_tuned_classifier(side_effects_clf, X_fit_resampled, y_fit_resampled,
                                           is_multilabel=False, use_weights=True)
-                clf.fit(X_train_resampled, y_train_resampled)
+                clf.fit(X_fit_resampled, y_fit_resampled)
                 self.side_effects_binary_classifiers[class_name] = clf
 
-                # Threshold tuning if enabled and classifier supports predict_proba
+                # Threshold tuning on held-out validation set (not test set)
                 if use_threshold_tuning and hasattr(clf, 'predict_proba'):
                     try:
-                        y_proba_test = clf.predict_proba(X_test)[:, 1]
-                        opt_thresh, opt_f1 = self._tune_threshold(y_test_binary, y_proba_test)
+                        y_proba_val = clf.predict_proba(X_val)[:, 1]
+                        y_val_binary = Y_se_val[:, i]
+                        opt_thresh, opt_f1 = self._tune_threshold(y_val_binary, y_proba_val)
                         self.optimal_thresholds[class_name] = opt_thresh
 
                         # Use tuned threshold for predictions
                         Y_se_pred_train[:, i] = (clf.predict_proba(X_train)[:, 1] >= opt_thresh).astype(int)
-                        Y_se_pred[:, i] = (y_proba_test >= opt_thresh).astype(int)
+                        Y_se_pred[:, i] = (clf.predict_proba(X_test)[:, 1] >= opt_thresh).astype(int)
                         print(f"    '{class_name}': threshold={opt_thresh:.2f}, F1={opt_f1:.3f} (pos={pos_count})")
                     except Exception as e:
                         # Fallback to default prediction
@@ -1444,15 +1464,14 @@ class FunctionEmbeddingPipeline:
 
         else:
             # Original multi-label approach with MultiOutputClassifier
-            base_clf = get_tuned_classifier(side_effects_clf, X_train, Y_se_train[:, 0],
+            base_clf = get_tuned_classifier(side_effects_clf, X_train_fit, Y_se_train_fit[:, 0],
                                            is_multilabel=True, use_weights=True)
             self.side_effects_classifier = MultiOutputClassifier(base_clf)
-            self.side_effects_classifier.fit(X_train, Y_se_train)
+            self.side_effects_classifier.fit(X_train_fit, Y_se_train_fit)
 
-            # Threshold tuning for multi-label if enabled
+            # Threshold tuning on held-out validation set (not test set)
             if use_threshold_tuning:
                 try:
-                    # Get probability predictions from each estimator
                     Y_se_pred_train = np.zeros_like(Y_se_train)
                     Y_se_pred = np.zeros_like(Y_se_test)
 
@@ -1460,12 +1479,12 @@ class FunctionEmbeddingPipeline:
                         zip(self.side_effects_mlb.classes_, self.side_effects_classifier.estimators_)
                     ):
                         if hasattr(estimator, 'predict_proba'):
-                            y_proba_test = estimator.predict_proba(X_test)[:, 1]
-                            opt_thresh, opt_f1 = self._tune_threshold(Y_se_test[:, i], y_proba_test)
+                            y_proba_val = estimator.predict_proba(X_val)[:, 1]
+                            opt_thresh, opt_f1 = self._tune_threshold(Y_se_val[:, i], y_proba_val)
                             self.optimal_thresholds[class_name] = opt_thresh
 
                             Y_se_pred_train[:, i] = (estimator.predict_proba(X_train)[:, 1] >= opt_thresh).astype(int)
-                            Y_se_pred[:, i] = (y_proba_test >= opt_thresh).astype(int)
+                            Y_se_pred[:, i] = (estimator.predict_proba(X_test)[:, 1] >= opt_thresh).astype(int)
                             print(f"    '{class_name}': threshold={opt_thresh:.2f}, F1={opt_f1:.3f}")
                         else:
                             Y_se_pred_train[:, i] = estimator.predict(X_train)
@@ -1517,10 +1536,8 @@ class FunctionEmbeddingPipeline:
         complexity_encoder = LabelEncoder()
         Y_cx = complexity_encoder.fit_transform(complexity_list)
         self.complexity_classes = complexity_encoder.classes_.tolist()
-
-        _, _, Y_cx_train, Y_cx_test = train_test_split(
-            X, Y_cx, test_size=test_size, random_state=random_state
-        )
+        Y_cx_train = Y_cx[train_idx]
+        Y_cx_test = Y_cx[test_idx]
 
         X_cx_train, Y_cx_train_resampled = X_train, Y_cx_train
         if use_smote and IMBLEARN_AVAILABLE:
@@ -1560,10 +1577,8 @@ class FunctionEmbeddingPipeline:
         error_handling_encoder = LabelEncoder()
         Y_eh = error_handling_encoder.fit_transform(error_handling_list)
         self.error_handling_classes = error_handling_encoder.classes_.tolist()
-
-        _, _, Y_eh_train, Y_eh_test = train_test_split(
-            X, Y_eh, test_size=test_size, random_state=random_state
-        )
+        Y_eh_train = Y_eh[train_idx]
+        Y_eh_test = Y_eh[test_idx]
 
         X_eh_train, Y_eh_train_resampled = X_train, Y_eh_train
         if use_smote and IMBLEARN_AVAILABLE:
@@ -1604,7 +1619,7 @@ class FunctionEmbeddingPipeline:
         # Aggregate metrics
         metrics["test_f1_macro"] = metrics["side_effects"]["test_f1_macro"]
         metrics["test_accuracy"] = metrics["side_effects"]["test_accuracy"]
-        metrics["train_f1_macro"] = metrics["test_f1_macro"]  # Approximation
+        metrics["train_f1_macro"] = metrics["side_effects"]["train_f1_macro"]
 
         return metrics
 
