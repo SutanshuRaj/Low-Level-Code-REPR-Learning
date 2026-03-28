@@ -347,8 +347,8 @@ def main():
     parser.add_argument(
         "--embedder", "-e",
         default="codebert",
-        choices=["codebert", "qwen3", "qwen3-4b", "qwen3-8b", "nomic", "jina", "codesage"],
-        help="Embedding model: codebert, qwen3 (0.6B), qwen3-4b, qwen3-8b, nomic, jina, or codesage (default: codebert)"
+        choices=["codebert", "qwen3", "qwen3-4b", "nomic", "jina", "codesage"],
+        help="Embedding model: codebert, qwen3 (0.6B), qwen3-4b, nomic, jina, or codesage (default: codebert)"
     )
 
     parser.add_argument(

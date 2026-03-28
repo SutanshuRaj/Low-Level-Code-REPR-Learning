@@ -477,7 +477,6 @@ class Qwen3Embedder:
     Available models (from https://huggingface.co/collections/Qwen/qwen3-embedding):
     - Qwen/Qwen3-Embedding-0.6B (default, fast, good quality)
     - Qwen/Qwen3-Embedding-4B (better quality, slower)
-    - Qwen/Qwen3-Embedding-8B (best quality, slowest)
 
     Why Qwen3-Embedding:
     - State-of-the-art embedding quality
@@ -489,7 +488,6 @@ class Qwen3Embedder:
     MODELS = {
         "0.6B": "Qwen/Qwen3-Embedding-0.6B",
         "4B": "Qwen/Qwen3-Embedding-4B",
-        "8B": "Qwen/Qwen3-Embedding-8B",
     }
     MODEL_NAME = "Qwen/Qwen3-Embedding-0.6B"  # Default
 
@@ -835,14 +833,13 @@ def get_embedder(model_type: str = "codebert", device: Optional[str] = None):
     Factory function to get the appropriate embedder.
 
     Args:
-        model_type: "codebert", "qwen3", "qwen3-4b", "qwen3-8b", "nomic", "jina", or "codesage"
+        model_type: "codebert", "qwen3", "qwen3-4b", "nomic", "jina", or "codesage"
         device: "cuda", "mps", or "cpu"
 
     Available models:
     - codebert: microsoft/codebert-base (768 dim, 512 max tokens)
     - qwen3: Qwen/Qwen3-Embedding-0.6B (1024 dim, 32k context)
     - qwen3-4b: Qwen/Qwen3-Embedding-4B (better quality, 32k context)
-    - qwen3-8b: Qwen/Qwen3-Embedding-8B (best quality, 32k context)
     - nomic: nomic-ai/nomic-embed-code (768 dim, 32k context, code-specific)
     - jina: jinaai/jina-embeddings-v2-base-code (768 dim, 8k context, code-specific)
     - codesage: codesage/codesage-large-v2 (2048 dim, 1024 max tokens, code-specific)
@@ -853,8 +850,6 @@ def get_embedder(model_type: str = "codebert", device: Optional[str] = None):
         return Qwen3Embedder(device=device, model_size="0.6B")
     elif model_type == "qwen3-4b":
         return Qwen3Embedder(device=device, model_size="4B")
-    elif model_type == "qwen3-8b":
-        return Qwen3Embedder(device=device, model_size="8B")
     elif model_type == "nomic":
         return NomicCodeEmbedder(device=device)
     elif model_type == "codesage":
@@ -1909,8 +1904,6 @@ class FunctionEmbeddingPipeline:
             if "qwen" in model_name.lower():
                 if "4B" in model_name or "4b" in model_name:
                     embedder_type = "qwen3-4b"
-                elif "8B" in model_name or "8b" in model_name:
-                    embedder_type = "qwen3-8b"
                 else:
                     embedder_type = "qwen3"
             elif "nomic" in model_name.lower():
@@ -2005,8 +1998,6 @@ class FunctionEmbeddingPipeline:
                 if "qwen" in model_name:
                     if "4b" in model_name:
                         current_type = "qwen3-4b"
-                    elif "8b" in model_name:
-                        current_type = "qwen3-8b"
                     else:
                         current_type = "qwen3"
                 elif "nomic" in model_name:
