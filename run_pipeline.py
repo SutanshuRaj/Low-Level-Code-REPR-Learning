@@ -116,6 +116,7 @@ def run_embedding(labeled_data: list, output_dir: str,
                   use_binary_classifiers: bool = False,
                   use_smote: bool = False,
                   use_hybrid_features: bool = False,
+                  use_hardware_features: bool = False,
                   use_ast_features: bool = False,
                   use_purpose_embeddings: bool = False,
                   use_threshold_tuning: bool = False) -> "FunctionEmbeddingPipeline":
@@ -137,7 +138,10 @@ def run_embedding(labeled_data: list, output_dir: str,
     print(f"  complexity:     {cx_clf}")
     print(f"  error_handling: {eh_clf}")
     if use_hybrid_features:
-        print(f"  Hybrid features: ENABLED (regex-based API detection)")
+        if use_hardware_features:
+            print(f"  Hybrid features: ENABLED (40 features: 20 base + 20 embedded/bare-metal HW)")
+        else:
+            print(f"  Hybrid features: ENABLED (20 base regex features)")
     if use_ast_features:
         print(f"  AST features: ENABLED (statement distribution, control-flow depth)")
     if use_purpose_embeddings:
@@ -149,6 +153,7 @@ def run_embedding(labeled_data: list, output_dir: str,
     embedder = get_embedder(embedder_type)
 
     pipeline = FunctionEmbeddingPipeline(embedder=embedder)
+    pipeline.use_hardware_features = use_hardware_features
     pipeline.embed_labeled_functions(labeled_data)
 
     # Train classifier
@@ -481,7 +486,13 @@ def main():
     parser.add_argument(
         "--hybrid-features",
         action="store_true",
-        help="Concatenate hand-crafted code features (API calls, metrics) with embeddings"
+        help="Concatenate hand-crafted code features (API calls, metrics) with embeddings (20 base features)"
+    )
+
+    parser.add_argument(
+        "--hardware-features",
+        action="store_true",
+        help="Add 20 embedded/bare-metal HW features (MMIO, regmap, IRQ, SPI, I2C, GPIO, etc). Implies --hybrid-features"
     )
 
     parser.add_argument(
@@ -503,6 +514,10 @@ def main():
     )
 
     args = parser.parse_args()
+
+    # --hardware-features implies --hybrid-features
+    if args.hardware_features:
+        args.hybrid_features = True
 
     # Ensure directories exist
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
@@ -569,6 +584,7 @@ def main():
             use_binary_classifiers=args.binary_classifiers,
             use_smote=args.smote,
             use_hybrid_features=args.hybrid_features,
+            use_hardware_features=args.hardware_features,
             use_ast_features=args.ast_features,
             use_purpose_embeddings=args.purpose_embeddings,
             use_threshold_tuning=args.threshold_tuning
